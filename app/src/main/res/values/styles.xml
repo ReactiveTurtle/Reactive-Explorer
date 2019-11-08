@@ -1,0 +1,39 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="BaseTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowMinWidthMinor">90%</item>
+        <item name="android:windowMinWidthMajor">90%</item>
+    </style>
+
+    <style name="DarkTheme" parent="BaseTheme">
+        <item name="colorPrimary">@color/colorPrimaryBlack</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryBlack</item>
+        <item name="android:windowBackground">@color/colorPrimaryDarkBlack</item>
+        <item name="colorAccent">@color/colorAccentBlack</item>
+
+        <item name="bottomNavigationViewBackground">@color/colorPrimaryBlack</item>
+        <item name="selectableItemBackground">@drawable/directory_adapter_item_selector</item>
+        <item name="directoryAdapterItemBackground">@color/colorDirectoryAdapterBackgroundBlack
+        </item>
+        <item name="colorPressDirectoryAdapter">@color/colorPressDirectoryAdapterBlack</item>
+        <item name="dividerColor">@color/colorDividerBlack</item>
+        <item name="buttonStyle">@style/ButtonTheme</item>
+    </style>
+
+    <style name="DarkTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="ButtonTheme" parent="Widget.AppCompat.Button">
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">@color/colorButtonBack</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <color name="colorDirectoryFragmentFocuserBlack">#AA000000</color>
+</resources>

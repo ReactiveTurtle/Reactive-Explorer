@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_paste"
+        android:icon="@drawable/ic_content_paste_black_48dp"
+        android:title="@string/paste"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/action_create_new_folder"
+        android:icon="@drawable/ic_create_new_folder_black_48dp"
+        android:title="@string/create_new_file" />
+
+    <item
+        android:id="@+id/action_create_new_file"
+        android:icon="@drawable/ic_note_add_black_48dp"
+        android:title="@string/create_new_folder" />
+
+    <item
+        android:id="@+id/action_tab_add"
+        android:icon="@drawable/ic_tab_add_black_48dp"
+        android:title="@string/add_new_tab" />
+</menu>

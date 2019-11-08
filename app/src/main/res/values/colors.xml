@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorButtonBack">#d32f2f</color>
+
+    <!-- For Black Theme -->
+    <color name="colorAccentBlack">#00BCD4</color>
+    <color name="colorPrimaryBlack">#252525</color>
+    <color name="colorDirectoryAdapterBackgroundBlack">#1A1A1A</color>
+    <color name="colorPrimaryDarkBlack">#000000</color>
+    <color name="colorPressDirectoryAdapterBlack">#8F00BCD4</color>
+    <color name="colorDividerBlack">#3F3F3F</color>
+</resources>

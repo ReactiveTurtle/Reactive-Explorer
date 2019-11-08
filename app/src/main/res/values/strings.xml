@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Reactive Explorer</string>
+    <string name="action_settings">Settings</string>
+    <string name="general">Главная</string>
+    <string name="pages">Страницы</string>
+    <string name="go">Перейти</string>
+    <string name="paste">Вставить</string>
+    <string name="create_new_file">Создать новый файл</string>
+    <string name="create_new_folder">Создать новую папку</string>
+    <string name="add_new_tab">Добавить новую вкладку</string>
+</resources>
