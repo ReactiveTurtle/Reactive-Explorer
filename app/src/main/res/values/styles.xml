@@ -17,6 +17,7 @@
         <item name="directoryAdapterItemBackground">@color/colorDirectoryAdapterBackgroundBlack
         </item>
         <item name="colorPressDirectoryAdapter">@color/colorPressDirectoryAdapterBlack</item>
+        <item name="colorEditTextBackground">@color/colorPrimaryDarkBlack</item>
         <item name="dividerColor">@color/colorDividerBlack</item>
         <item name="buttonStyle">@style/ButtonTheme</item>
     </style>

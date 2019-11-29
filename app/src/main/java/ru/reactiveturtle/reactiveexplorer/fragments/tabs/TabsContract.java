@@ -11,6 +11,8 @@ public interface TabsContract {
 
         void showSelectionDialog();
 
+        void showCopyDialog(File[] src, File[] dst, boolean isCopy);
+
         void addDirectoryFragmentBefore(String dir, int position);
 
         void showFragmentAt(int position);
@@ -19,7 +21,11 @@ public interface TabsContract {
 
         void showBottomNavigationViewMenu(int menuId);
 
+        void setBottomNavigationViewItemVisible(int itemId, boolean isVisible);
+
         void sendUpdateToolbarTitle(String path);
+
+        void showToast(String text);
 
         boolean onBackPressed();
     }
@@ -37,7 +43,7 @@ public interface TabsContract {
 
         void onAddDirectoryPath();
 
-        void onRenameFile();
+        void onFileActionSelected(int itemId);
 
         boolean onBackPressed();
     }
@@ -52,6 +58,14 @@ public interface TabsContract {
         void setSelectedFile(int position, String absolutePath);
 
         boolean isSelectedFile(int position);
+
+        void putFilesToBuffer(String[] files, boolean isCopied);
+
+        void clearFilesBuffer();
+
+        String[] getFilesBuffer();
+
+        boolean isFilesCopied();
 
         String[] getFiles();
 

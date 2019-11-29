@@ -8,12 +8,12 @@
         android:visible="false" />
 
     <item
-        android:id="@+id/action_create_new_folder"
+        android:id="@+id/action_create_folder"
         android:icon="@drawable/ic_create_new_folder_black_48dp"
         android:title="@string/create_new_file" />
 
     <item
-        android:id="@+id/action_create_new_file"
+        android:id="@+id/action_create_file"
         android:icon="@drawable/ic_note_add_black_48dp"
         android:title="@string/create_new_folder" />
 

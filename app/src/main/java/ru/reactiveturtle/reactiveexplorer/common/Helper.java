@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.LightingColorFilter;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.AsyncTask;
 import android.util.TypedValue;
 
 public class Helper {

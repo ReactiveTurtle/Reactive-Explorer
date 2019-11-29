@@ -3,8 +3,17 @@ package ru.reactiveturtle.reactiveexplorer.fragments.tabs;
 import java.io.File;
 
 public class TabsModel implements TabsContract.Model {
+    public static final int FOLDER_CREATE = 0;
+    public static final int REWRITE = 1;
+    public static final int PASTE = 2;
+    public static final int OBJECT_NOT_EXISTS = 3;
+
     private boolean mIsSelectMode = false;
     private String[] paths;
+    private String[] filesBuffer = new String[0];
+
+    private boolean isCopied = false;
+
     private int selectedCount = 0;
 
     @Override
@@ -37,6 +46,27 @@ public class TabsModel implements TabsContract.Model {
     @Override
     public boolean isSelectedFile(int position) {
         return paths[position] != null;
+    }
+
+    @Override
+    public void putFilesToBuffer(String[] files, boolean isCopied) {
+        filesBuffer = files;
+        this.isCopied = isCopied;
+    }
+
+    @Override
+    public void clearFilesBuffer() {
+        filesBuffer = new String[0];
+    }
+
+    @Override
+    public String[] getFilesBuffer() {
+        return filesBuffer;
+    }
+
+    @Override
+    public boolean isFilesCopied() {
+        return isCopied;
     }
 
     @Override

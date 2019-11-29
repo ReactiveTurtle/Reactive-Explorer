@@ -1,12 +1,18 @@
 package ru.reactiveturtle.reactiveexplorer.fragments.tabs;
 
 import android.os.Environment;
+import android.text.InputType;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
+import ru.reactiveturtle.reactiveexplorer.AppHelper;
 import ru.reactiveturtle.reactiveexplorer.R;
 import ru.reactiveturtle.reactiveexplorer.common.Repository;
+import ru.reactiveturtle.reactiveexplorer.common.warning.WarningDialogBuilder;
 import ru.reactiveturtle.reactiveexplorer.fragments.tabs.directory.DirectoryContract;
 
 public class TabsPresenter implements TabsContract.Presenter, DirectoryContract.Presenter {
@@ -109,14 +115,56 @@ public class TabsPresenter implements TabsContract.Presenter, DirectoryContract.
     }
 
     @Override
-    public void onRenameFile() {
-        String[] paths = mModel.getFiles();
-        if (mModel.getSelectedFilesCount() == 1)
-            for (int i = 0; i < paths.length; i++)
-                if (paths[i] != null) {
-                    mFragment.showRenameDialogForAlone(i, new File(mModel.getFiles()[i]));
-                    break;
+    public void onFileActionSelected(int itemId) {
+        switch (itemId) {
+            case R.id.action_create_folder:
+                mFragment.showNameDialog("", "Введите название папки", InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE, "Создать", "Отмена", itemId);
+                break;
+            case R.id.action_create_file:
+                mFragment.showNameDialog("", "Введите название файла", InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE, "Создать", "Отмена", itemId);
+                break;
+            case R.id.action_cut:
+            case R.id.action_copy:
+                String[] files = new String[mModel.getSelectedFilesCount()];
+                int c = 0;
+                for (String str : mModel.getFiles()) {
+                    if (str != null) {
+                        files[c] = str;
+                        c++;
+                    }
                 }
+                mModel.putFilesToBuffer(files, itemId == R.id.action_copy);
+                quitSelectMode();
+                break;
+            case R.id.action_paste:
+                String[] stringBuffer = mModel.getFilesBuffer();
+                File[] buffer = new File[mModel.getFilesBuffer().length];
+                for (int i = 0; i < buffer.length; i++) {
+                    buffer[i] = new File(stringBuffer[i]);
+                }
+                mView.showCopyDialog(AppHelper.getSrcFiles(buffer),
+                        AppHelper.getDstFiles(buffer), mModel.isFilesCopied());
+                break;
+            case R.id.action_rename_file:
+            case R.id.action_delete:
+                String[] paths = mModel.getFiles();
+                if (mModel.getSelectedFilesCount() == 1)
+                    for (int i = 0; i < paths.length; i++)
+                        if (paths[i] != null) {
+                            switch (itemId) {
+                                case R.id.action_rename_file:
+                                    mFragment.showRenameDialogForAlone(i, new File(mModel.getFiles()[i]), itemId);
+                                    break;
+                                case R.id.action_delete:
+                                    mFragment.showNameDialog("Вы действительно хотите удалить эт" +
+                                                    (new File(mModel.getFiles()[i]).isDirectory() ? "у папку" : "от файл") + "?", "",
+                                            InputType.TYPE_TEXT_VARIATION_NORMAL, "Удалить", "Отмена", itemId);
+                                    break;
+                            }
+                            break;
+                        }
+                break;
+        }
     }
 
     @Override
@@ -163,12 +211,52 @@ public class TabsPresenter implements TabsContract.Presenter, DirectoryContract.
     }
 
     @Override
-    public void onFileRenamed(String result, String rule) {
-        if (mModel.isSelectMode()) {
-
-            quitSelectMode();
-            mFragment.updateFilesList(new File(mRepository.getDirectories()[mRepository.getSelectedTabDirectoryPosition()]));
+    public void onNameDialogResult(String result, int itemId) {
+        switch (itemId) {
+            case R.id.action_create_folder:
+                if (!new File(mRepository.getDirectories()[mRepository.getSelectedTabDirectoryPosition()] + "/" + result).mkdir()) {
+                    mView.showToast("Не удалось создать новую папку");
+                }
+                break;
+            case R.id.action_create_file:
+                try {
+                    if (!new File(mRepository.getDirectories()[mRepository.getSelectedTabDirectoryPosition()] + "/" + result).createNewFile()) {
+                        mView.showToast("Не удалось создать новый файл");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.action_rename_file:
+            case R.id.action_delete:
+                if (mModel.isSelectMode()) {
+                    String[] paths = mModel.getFiles();
+                    if (mModel.getSelectedFilesCount() == 1)
+                        for (String path : paths)
+                            if (path != null) {
+                                switch (itemId) {
+                                    case R.id.action_rename_file:
+                                        if (new File(path).exists() && !new File(path).renameTo(new File(mRepository.getDirectories()[mRepository.getSelectedTabDirectoryPosition()] + "/" + result))) {
+                                            mView.showToast("Не удалось изменить название " + (new File(path).isDirectory() ? "папки" : "файла"));
+                                        }
+                                        break;
+                                    case R.id.action_delete:
+                                        File file = new File(path);
+                                        if (file.isDirectory()) {
+                                            if (removeFolder(file))
+                                                mView.showToast("Не удалось удалить папку");
+                                        } else if (!file.isDirectory())
+                                            if (!file.delete())
+                                                mView.showToast("Не удалось удалить файл");
+                                        break;
+                                }
+                                break;
+                            }
+                    quitSelectMode();
+                }
+                break;
         }
+        mFragment.updateFilesList(new File(mRepository.getDirectories()[mRepository.getSelectedTabDirectoryPosition()]));
     }
 
     private void updateDirectory(File file) {
@@ -195,5 +283,23 @@ public class TabsPresenter implements TabsContract.Presenter, DirectoryContract.
             }
         }
         mView.showBottomNavigationViewMenu(R.menu.tabs_bottom_navigation_view_add_menu);
+        if (mModel.getFilesBuffer().length > 0) {
+            mView.setBottomNavigationViewItemVisible(R.id.action_paste, true);
+        }
+    }
+
+    private boolean removeFolder(File file) {
+        for (File f : file.listFiles()) {
+            if (!f.isDirectory()) {
+                if (!f.delete()) {
+                    return true;
+                }
+            } else {
+                if (removeFolder(f)) {
+                    return true;
+                }
+            }
+        }
+        return !file.delete();
     }
 }

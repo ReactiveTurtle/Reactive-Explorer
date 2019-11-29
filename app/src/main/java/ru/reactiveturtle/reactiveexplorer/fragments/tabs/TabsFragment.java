@@ -10,7 +10,11 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import java.io.File;
+
+import ru.reactiveturtle.reactiveexplorer.FileCopyDialog;
 import ru.reactiveturtle.reactiveexplorer.FragmentsPagerAdapter;
 import ru.reactiveturtle.reactiveexplorer.R;
 import ru.reactiveturtle.reactiveexplorer.common.Repository;
@@ -52,12 +56,14 @@ public class TabsFragment extends Fragment implements TabsContract.View {
         mBottomNavigationView = root.findViewById(R.id.tab_bottom_navigation_view);
         mBottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
-                case R.id.action_create_new_folder:
-                    break;
-                case R.id.action_create_new_file:
-                    break;
-                case R.id.action_rename:
-                    mPresenter.onRenameFile();
+                case R.id.action_create_folder:
+                case R.id.action_create_file:
+                case R.id.action_cut:
+                case R.id.action_copy:
+                case R.id.action_paste:
+                case R.id.action_rename_file:
+                case R.id.action_delete:
+                    mPresenter.onFileActionSelected(menuItem.getItemId());
                     break;
                 case R.id.action_tab_add:
                     mPresenter.onAddDirectoryPath();
@@ -117,7 +123,7 @@ public class TabsFragment extends Fragment implements TabsContract.View {
     public void showSelectionDialog() {
         if (getFragmentManager() != null) {
             SelectionDialog dialog = SelectionDialog.newInstance("Выберите действие:",
-                    new String[]{"Создать файл", "Создать папку", "Удалить текущую вкладку"});
+                    new String[]{"Удалить текущую вкладку"});
             dialog.setOnItemClickListener(result -> {
                 switch (result) {
                     case "Удалить текущую вкладку":
@@ -127,6 +133,14 @@ public class TabsFragment extends Fragment implements TabsContract.View {
                 dialog.dismiss();
             });
             dialog.show(getFragmentManager(), "tab_action_selection_dialog");
+        }
+    }
+
+    @Override
+    public void showCopyDialog(File[] src, File[] dst, boolean isCopy) {
+        if (getFragmentManager() != null) {
+            FileCopyDialog dialog = FileCopyDialog.newInstance(src, dst, isCopy);
+            dialog.show(getFragmentManager(), "file_copy_dialog");
         }
     }
 
@@ -166,6 +180,11 @@ public class TabsFragment extends Fragment implements TabsContract.View {
         if (mOnImportantChangeListener != null) {
             mOnImportantChangeListener.onChangeTitle(path);
         }
+    }
+
+    @Override
+    public void showToast(String text) {
+        Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show();
     }
 
     @Override

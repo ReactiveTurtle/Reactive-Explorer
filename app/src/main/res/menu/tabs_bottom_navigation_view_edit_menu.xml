@@ -18,7 +18,7 @@
         tools:ignore="MenuTitle" />
 
     <item
-        android:id="@+id/action_rename"
+        android:id="@+id/action_rename_file"
         android:icon="@drawable/ic_mode_edit_black_48dp"
         tools:ignore="MenuTitle" />
 

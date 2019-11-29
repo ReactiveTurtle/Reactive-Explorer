@@ -16,7 +16,9 @@ import java.io.File;
 import java.util.Arrays;
 
 import ru.reactiveturtle.reactiveexplorer.R;
-import ru.reactiveturtle.reactiveexplorer.common.ChangeDialog;
+import ru.reactiveturtle.reactiveexplorer.common.NameDialog;
+import ru.reactiveturtle.reactiveexplorer.common.warning.WarningDialog;
+import ru.reactiveturtle.reactiveexplorer.common.warning.WarningDialogBuilder;
 import ru.reactiveturtle.reactiveexplorer.fragments.tabs.ModifiedLinearSmoothScroller;
 import ru.reactiveturtle.reactiveexplorer.fragments.tabs.Sorter;
 
@@ -93,7 +95,7 @@ public class DirectoryFragment extends Fragment implements DirectoryContract.Vie
     }
 
     @Override
-    public void showRenameDialogForAlone(int position, File file) {
+    public void showRenameDialogForAlone(int position, File file, int itemId) {
         if (mRecyclerView.getLayoutManager() != null) {
             ModifiedLinearSmoothScroller smoothScroller = new ModifiedLinearSmoothScroller(getContext());
             smoothScroller.setTargetPosition(position);
@@ -106,28 +108,31 @@ public class DirectoryFragment extends Fragment implements DirectoryContract.Vie
                 @Override
                 public void onStop() {
                     smoothScroller.setOnSmoothScrollListener(null);
-                    ChangeDialog dialog = ChangeDialog.newInstance(file.getName(),
-                            "Введите название " + (file.isDirectory() ? "папки" : "файла"), InputType.TYPE_TEXT_VARIATION_PERSON_NAME,
-                            "Переименовать", "Отмена");
-                    dialog.setOnClickListener(new ChangeDialog.OnClickListener() {
-                        @Override
-                        public void onLeftButtonClicked(String result) {
-                            if (file.exists()) {
-                                mPresenter.onFileRenamed(result, "");
-                            }
-                        }
-
-                        @Override
-                        public void onRightButtonClicked() {
-
-                        }
-                    });
-                    if (getFragmentManager() != null) {
-                        dialog.show(getFragmentManager(), "rename_dialog");
-                    }
+                    showNameDialog(file.getName(),
+                            "Введите название " + (file.isDirectory() ? "папки" : "файла"), InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE,
+                            "Переименовать", "Отмена", itemId);
                 }
             });
             mRecyclerView.getLayoutManager().startSmoothScroll(smoothScroller);
+        }
+    }
+
+    @Override
+    public void showNameDialog(String text, String hintText, int inputType, String leftButton, String rightButton, int itemId) {
+        NameDialog dialog = NameDialog.newInstance(text, hintText, inputType, leftButton, rightButton);
+        dialog.setOnClickListener(new NameDialog.OnClickListener() {
+            @Override
+            public void onLeftButtonClicked(String result) {
+                mPresenter.onNameDialogResult(result, itemId);
+            }
+
+            @Override
+            public void onRightButtonClicked() {
+
+            }
+        });
+        if (getFragmentManager() != null) {
+            dialog.show(getFragmentManager(), "change_dialog");
         }
     }
 }

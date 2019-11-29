@@ -4,4 +4,5 @@
     <attr name="directoryAdapterItemBackground" format="color">#00000000</attr>
     <attr name="colorPressDirectoryAdapter" format="color">#3399cc00</attr>
     <attr name="dividerColor" format="color">#00000000</attr>
+    <attr name="colorEditTextBackground" format="color">#00000000</attr>
 </resources>
