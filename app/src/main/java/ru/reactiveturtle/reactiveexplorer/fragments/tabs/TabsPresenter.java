@@ -12,7 +12,6 @@ import java.util.Arrays;
 import ru.reactiveturtle.reactiveexplorer.AppHelper;
 import ru.reactiveturtle.reactiveexplorer.R;
 import ru.reactiveturtle.reactiveexplorer.common.Repository;
-import ru.reactiveturtle.reactiveexplorer.common.warning.WarningDialogBuilder;
 import ru.reactiveturtle.reactiveexplorer.fragments.tabs.directory.DirectoryContract;
 
 public class TabsPresenter implements TabsContract.Presenter, DirectoryContract.Presenter {
@@ -85,6 +84,11 @@ public class TabsPresenter implements TabsContract.Presenter, DirectoryContract.
     }
 
     @Override
+    public void onFragmentUpdate() {
+        mFragment.updateFilesList(new File(mRepository.getDirectories()[mRepository.getSelectedTabDirectoryPosition()]));
+    }
+
+    @Override
     public void onFragmentRemoved(int position) {
         if (mFragment != null) {
             mFragment.setPresenter(null);
@@ -142,8 +146,12 @@ public class TabsPresenter implements TabsContract.Presenter, DirectoryContract.
                 for (int i = 0; i < buffer.length; i++) {
                     buffer[i] = new File(stringBuffer[i]);
                 }
-                mView.showCopyDialog(AppHelper.getSrcFiles(buffer),
-                        AppHelper.getDstFiles(buffer), mModel.isFilesCopied());
+                File[] src = AppHelper.getSrcFiles(buffer);
+                mView.showCopyDialog(src,
+                        AppHelper.getDstFiles(src,
+                                buffer[0].getParentFile().getAbsolutePath().length(),
+                                mRepository.getDirectories()[mRepository.getSelectedTabDirectoryPosition()]),
+                        mModel.isFilesCopied());
                 break;
             case R.id.action_rename_file:
             case R.id.action_delete:

@@ -140,6 +140,10 @@ public class TabsFragment extends Fragment implements TabsContract.View {
     public void showCopyDialog(File[] src, File[] dst, boolean isCopy) {
         if (getFragmentManager() != null) {
             FileCopyDialog dialog = FileCopyDialog.newInstance(src, dst, isCopy);
+            dialog.setOnEndListener(() -> {
+                mPresenter.onFragmentUpdate();
+                Toast.makeText(getContext(), (isCopy ? "Копирование" : "Перемещение") + " файлов завершено", Toast.LENGTH_SHORT).show();
+            });
             dialog.show(getFragmentManager(), "file_copy_dialog");
         }
     }

@@ -5,26 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class AppHelper {
-    public static File[] getSrcFilesRecursive(File[] filesBuffer) {
-        ArrayList<File> filesList = new ArrayList<>();
-        for (File file : filesBuffer) {
-            if (file.isDirectory()) {
-                if (file.listFiles().length > 0) {
-                    filesList.addAll(Arrays.asList(getSrcFilesRecursive(file.listFiles())));
-                } else {
-                    filesList.add(file);
-                }
-            } else {
-                filesList.add(file);
-            }
-        }
-        File[] result = new File[filesList.size()];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = filesList.get(i);
-        }
-        return result;
-    }
-
     public static File[] getSrcFiles(File[] buffer) {
         ArrayList<File> filesList = new ArrayList<>(Arrays.asList(buffer));
         ArrayList<File> filesListResult = new ArrayList<>();
@@ -47,7 +27,11 @@ public class AppHelper {
         return result;
     }
 
-    public static File[] getDstFiles(File[] buffer, String dstFolderPath) {
-        return new File[0];
+    public static File[] getDstFiles(File[] src, int srcPathLength, String dstFolderPath) {
+        File[] dst = new File[src.length];
+        for (int i = 0; i < dst.length; i++) {
+            dst[i] = new File(dstFolderPath + src[i].getAbsolutePath().substring(srcPathLength));
+        }
+        return dst;
     }
 }

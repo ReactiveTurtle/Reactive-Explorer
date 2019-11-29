@@ -1,5 +1,6 @@
 package ru.reactiveturtle.reactiveexplorer;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,6 +25,8 @@ public class FileCopyDialog extends ProgressDialog {
     private boolean isRewrite = false, isRewriteForAll = false, isRewriteSkip = false, isRewriteSkipForAll = false;
     private boolean isFileCreateSkip = false, isFileCreateSkipForAll = false;
     private boolean isObjectNotExistsSkip = false, isObjectNotExistsSkipForAll = false;
+
+    private OnEndListener onEndListener;
 
     public static FileCopyDialog newInstance(File[] src, File[] dst, boolean isCopy) {
         Bundle args = new Bundle();
@@ -99,7 +102,17 @@ public class FileCopyDialog extends ProgressDialog {
                             }
                         }
                     } else {
-
+                        if (dst.exists()) {
+                            builder = new WarningDialogBuilder()
+                                    .setId("warning_fail_file_rewrite")
+                                    .setWarningMessage("Файл уже существует. Перезаписать?")
+                                    .setButtonsText("Да", "Пропустить", "Отмена");
+                        } else if (!src.renameTo(dst)) {
+                            builder = new WarningDialogBuilder()
+                                    .setId("warning_fail_object_paste")
+                                    .setWarningMessage("Не удалось переместить. Попробовать снова?")
+                                    .setButtonsText("Да", "Пропустить", "Отмена");
+                        }
                     }
                 } else {
                     builder = new WarningDialogBuilder()
@@ -124,7 +137,7 @@ public class FileCopyDialog extends ProgressDialog {
 
                         @Override
                         public void onRightButtonClicked() {
-
+                            dismiss();
                         }
                     });
                     dialog.show(getFragmentManager(), "warning_dialog");
@@ -135,6 +148,25 @@ public class FileCopyDialog extends ProgressDialog {
             setProgressName("Из: " + files[0][i].getAbsolutePath() + "\n" +
                     "В: " + files[1][i]);
             setProgressText((i + 1) + "/" + files[0].length);
+            if (i == files[0].length - 1) {
+                dismiss();
+            }
         }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (onEndListener != null) {
+            onEndListener.onEnd();
+        }
+    }
+
+    public void setOnEndListener(OnEndListener onEndListener) {
+        this.onEndListener = onEndListener;
+    }
+
+    public interface OnEndListener {
+        void onEnd();
     }
 }

@@ -37,6 +37,8 @@ public interface TabsContract {
 
         void onFragmentSelected(DirectoryContract.View fragment, int position);
 
+        void onFragmentUpdate();
+
         void onFragmentRemoved(int position);
 
         void onTabReselected();
